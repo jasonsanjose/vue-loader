@@ -108,6 +108,36 @@ describe('vue-loader', function () {
     })
   })
 
+  it('directory', function (done) {
+    test({
+      module: {
+        loaders: [
+          {
+            test: /\.vue\/index\.js$/,
+            loader: loaderPath
+          }
+        ]
+      },
+      entry: './test/fixtures/Folder.vue/index.js',
+      vue: {
+        directory: true
+      }
+    }, function (window, module, rawModule) {
+      var vnode = mockRender(module, {
+        msg: 'directory'
+      })
+      // <h2 class="red">{{msg}}</h2>
+      expect(vnode.tag).to.equal('h2')
+      expect(vnode.data.staticClass).to.equal('green')
+      expect(vnode.children[0]).to.equal('directory')
+
+      expect(module.data().msg).to.contain('Hello from a Folder Component!')
+      var style = window.document.querySelector('style').textContent
+      expect(style).to.contain('comp-a h2[data-v-2] {\n  color: #0f0;\n}')
+      done()
+    })
+  })
+
   it('pre-processors', function (done) {
     test({
       entry: './test/fixtures/pre.vue'
